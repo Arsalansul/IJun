@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 
 namespace Task3
 {
@@ -6,12 +7,12 @@ namespace Task3
     {
 
     }
-
     class Player : Unit
     {
         public readonly string Name;
         public int Age { get; private set; }
-        public Player(string name, int age, float moveSpeed, Vector2 position, Weapon weapon,int health) : base(moveSpeed, position, weapon, health)
+
+        public Player(string name, int age, float moveSpeed, Vector2 position, Weapon weapon) : base(moveSpeed, position, weapon)
         {
             Name = name;
             Age = age;
@@ -22,44 +23,23 @@ namespace Task3
     {
         public float MovementSpeed { get; private set; }
         public Vector2 Position { get; private set; }
-        public Weapon CurrentWeapon { get; private set; }
-        public int Health { get; private set; }
-        public bool IsAlive { get; private set; }
-        public Unit(float movementSpeed, Vector2 position, Weapon weapon, int health)
+        private Weapon _weapon;
+
+        public Unit(float movementSpeed, Vector2 position, Weapon weapon)
         {
             MovementSpeed = movementSpeed;
             Position = position;
-            CurrentWeapon = weapon;
-            Health = health;
-            IsAlive = true;
-        }
-        public void Move(Vector2 direction)
-        {
-            Position += direction * MovementSpeed;
+            _weapon = weapon;
         }
 
-        public void Attack(Unit target = null)
+        public void Move()
         {
-            if (CurrentWeapon.TryShoot())
-            {
-                target?.TakeDamage(CurrentWeapon.Damage);
-            }
+            //Do move
         }
 
-        private void TakeDamage(int damage)
+        public void Attack()
         {
-            if (!IsAlive)
-                return;
-            Health -= damage;
-            if (Health <= 0)
-            {
-                IsAlive = false;
-            }
-        }
-
-        public void ChangeWeapon(Weapon weapon)
-        {
-            CurrentWeapon = weapon;
+            _weapon.TryShoot();
         }
     }
 
@@ -67,47 +47,21 @@ namespace Task3
     {
         public float Cooldown { get; private set; }
         public int Damage { get; private set; }
-        public int Capacity { get; private set; }
-        public int ClipsCount { get; private set; }
-        public int CurrentBulletIndex { get; private set; }
-        public bool IsReloading { get; private set; }
 
-        public Weapon(int damage, float cooldown, int capacity)
+        public Weapon(int damage, float cooldown)
         {
             Damage = damage;
             Cooldown = cooldown;
-            Capacity = capacity;
-            CurrentBulletIndex = capacity;
         }
 
-        public void Reload()
+        public void TryShoot()
         {
-            if (ClipsCount <= 0)
-            {
-                return;
-            }
-
-            IsReloading = true;
-            //StartReloadTimer();
+            //attack
         }
 
-        public void OnReloadTimerFinished()
+        public bool IsReloading()
         {
-            ClipsCount--;
-            CurrentBulletIndex = Capacity;
-            IsReloading = false;
-        }
-
-        public bool TryShoot()
-        {
-            if (CurrentBulletIndex <= 0)
-            {
-                Reload();
-                return false;
-            }
-
-            CurrentBulletIndex--;
-            return true;
+            throw new NotImplementedException();
         }
     }
 }
