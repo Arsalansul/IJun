@@ -8,73 +8,59 @@ namespace Task1
         class MyObject
         {
             private Vector2 _position;
-            private bool _isalave;
-            private readonly string _sprite = "";
-            public Vector2 Position
-            {
-                get => _position;
-                set
-                {
-                    _position = value;
-                    if (_position.X < 0)
-                        _position.X = 0;
+            public readonly string Sprite = "";
 
-                    if (_position.Y < 0)
-                        _position.Y = 0;
-                }
-            }
-            public MyObject(Vector2 position, bool isalave, string sprite)
+            public Vector2 Position => _position;
+
+            public MyObject(Vector2 position, string sprite)
             {
                 _position = position;
-                _isalave = isalave;
-                _sprite = sprite;
+                Sprite = sprite;
             }
 
-            public void Death()
+            public void SetPosition(Vector2 value)
             {
-                _isalave = false;
-            }
+                _position = value;
+                if (_position.X < 0)
+                    _position.X = 0;
 
-            public void CheckCollide(MyObject obj)
-            {
-                if (Position == obj.Position)
-                {
-                    Death();
-                    obj.Death();
-                }
-            }
-
-            public void TryDraw()
-            {
-                if (_isalave)
-                {
-                    Console.SetCursorPosition((int)Position.X, (int)Position.Y);
-                    Console.Write(_sprite);
-                }
+                if (_position.Y < 0)
+                    _position.Y = 0;
             }
         }
         public static void Main(string[] args)
         {
-            var obj1 = new MyObject(new Vector2(5, 5), true, "1");
-            var obj2 = new MyObject(new Vector2(10, 10), true, "2");
-            var obj3 = new MyObject(new Vector2(15, 15), true, "3");
+            MyObject[] objects = new MyObject[3];
+            objects[0] = new MyObject(new Vector2(5, 5),  "1");
+            objects[1] = new MyObject(new Vector2(10, 10),  "2");
+            objects[2] = new MyObject(new Vector2(15, 15),  "3");
 
             Random random = new Random();
 
+            var index = 0;
             while (true)
             {
-                obj1.CheckCollide(obj2);
-                obj1.CheckCollide(obj3);
-                obj2.CheckCollide(obj3);
+                for (int i = 1; i < objects.Length; i++)
+                {
+                    var j = (index + i) % objects.Length;
+                    if (objects[index]?.Position == objects[j]?.Position)
+                    {
+                        objects[index] = null;
+                        objects[j] = null;
+                    }
+                }
 
-                obj1.Position += new Vector2(random.Next(-1,1), random.Next(-1, 1));
-                obj2.Position += new Vector2(random.Next(-1,1), random.Next(-1, 1));
-                obj3.Position += new Vector2(random.Next(-1,1), random.Next(-1, 1));
+                if (objects[index] != null)
+                {
+                    objects[index].SetPosition(objects[index].Position + new Vector2(random.Next(-1, 1), random.Next(-1, 1)));
+                    Console.SetCursorPosition((int) objects[index].Position.X, (int) (int) objects[index].Position.Y);
+                    Console.Write(objects[index].Sprite);
+                }
 
-                obj1.TryDraw();
-                obj2.TryDraw();
-                obj3.TryDraw();
+                index = (index + 1) % objects.Length;
             }
+
+            
         }
     }
 }
