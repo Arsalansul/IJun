@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Task4
 {
@@ -23,6 +19,7 @@ namespace Task4
             Health = health;
             Armor = armor;
         }
+
         public void TakeDamage(int damage)
         {
             ProcessDamage(damage);
@@ -32,7 +29,7 @@ namespace Task4
             }
         }
 
-        public virtual void ProcessDamage(int damage)
+        protected virtual void ProcessDamage(int damage)
         {
             Health -= damage - Armor;
         }
@@ -47,15 +44,15 @@ namespace Task4
     class Human : Unit
     {
         public int Agility { get; private set; }
+
         public Human(int health, int armor, int agility) : base(health, armor)
         {
             Agility = agility;
         }
-        public override void ProcessDamage(int damage)
+
+        protected override void ProcessDamage(int damage)
         {
             Health -= damage / Agility;
         }
-
-        
     }
 }
