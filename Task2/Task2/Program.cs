@@ -10,7 +10,7 @@ namespace Task2
     {
         class Bag
         {
-            public List<Item> Items { get; private set; }
+            private List<Item> _items;
             public int MaxWeight { get; private set; }
             public Bag(int maxWeight)
             {
@@ -19,15 +19,15 @@ namespace Task2
 
             public void AddItem(string name, int count)
             {
-                int currentWeidth = Items.Sum(item => item.Count);
+                int currentWeidth = _items.Sum(item => item.Count);
                 if (currentWeidth + count > MaxWeight)
                     throw new InvalidOperationException();
 
-                Item targetItem = Items.FirstOrDefault(item => item.Name == name);
+                Item targetItem = _items.FirstOrDefault(item => item.Name == name);
 
                 if (targetItem == null)
                 {
-                    Items.Add(new Item(count, name));
+                    _items.Add(new Item(count, name));
                 }
                 else
                 {
@@ -38,6 +38,20 @@ namespace Task2
             public void IncreaseMaxWeight(int value)
             {
                 MaxWeight += value;
+            }
+
+            public int GetItemCount(string name)
+            {
+                Item targetItem = _items.FirstOrDefault(item => item.Name == name);
+                if (targetItem != null)
+                    return targetItem.Count;
+                return 0;
+            }
+
+            public void PullItem(string name)
+            {
+                Item targetItem = _items.FirstOrDefault(item => item.Name == name);
+                targetItem?.Add(-1);
             }
         }
 
