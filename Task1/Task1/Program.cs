@@ -1,22 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 namespace Task1
 {
     class Program
     {
-        class MyObject
+        private const int START_OBJECTS_AMOUNT = 3;
+
+        class MovingObject
         {
-            private Vector2 _position;
             public readonly string Sprite = "";
+            private Vector2 _position;
 
-            public Vector2 Position => _position;
-
-            public MyObject(Vector2 position, string sprite)
+            public MovingObject(string sprite)
             {
-                _position = position;
                 Sprite = sprite;
             }
+
+            public Vector2 Position => _position;
 
             public void SetPosition(Vector2 value)
             {
@@ -30,37 +33,37 @@ namespace Task1
         }
         public static void Main(string[] args)
         {
-            MyObject[] objects = new MyObject[3];
-            objects[0] = new MyObject(new Vector2(5, 5),  "1");
-            objects[1] = new MyObject(new Vector2(10, 10),  "2");
-            objects[2] = new MyObject(new Vector2(15, 15),  "3");
+            List<MovingObject> objects = new List<MovingObject>();
+            for (int i = 0; i < START_OBJECTS_AMOUNT; i++)
+            {
+                var object_indicator = i + 1;
+                var _object = new MovingObject(object_indicator.ToString());
+                _object.SetPosition(new Vector2(object_indicator * 5, object_indicator * 5));
+                objects.Add(_object);
+            }
 
             Random random = new Random();
 
-            var index = 0;
             while (true)
             {
-                for (int i = 1; i < objects.Length; i++)
+                for (int i = 0; i < objects.Count; i++)
                 {
-                    var j = (index + i) % objects.Length;
-                    if (objects[index]?.Position == objects[j]?.Position)
-                    {
-                        objects[index] = null;
-                        objects[j] = null;
-                    }
+                    var collidedObjects = objects.FindAll(o => o.Position == objects[i].Position);
+                    if (collidedObjects.Count > 1)
+                        foreach (var collidedObject in collidedObjects)
+                        {
+                            objects.Remove(collidedObject);
+                        }
                 }
 
-                if (objects[index] != null)
+                foreach (var o in objects)
                 {
-                    objects[index].SetPosition(objects[index].Position + new Vector2(random.Next(-1, 1), random.Next(-1, 1)));
-                    Console.SetCursorPosition((int) objects[index].Position.X, (int) (int) objects[index].Position.Y);
-                    Console.Write(objects[index].Sprite);
+                    var newPosition = o.Position + new Vector2(random.Next(-1, 1), random.Next(-1, 1));
+                    o.SetPosition(newPosition);
+                    Console.SetCursorPosition((int) o.Position.X, (int) o.Position.Y);
+                    Console.Write(o.Sprite);
                 }
-
-                index = (index + 1) % objects.Length;
             }
-
-            
         }
     }
 }
